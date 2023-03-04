@@ -1,0 +1,18 @@
+syntax = "proto3";
+package pb;
+
+option go_package = "github.com/cryptowatch_challenge/proto";
+import "google/api/annotations.proto";
+
+message StringMessage {
+  uint32 value = 1;
+}
+
+service CryptoWatch {
+  rpc Echo(StringMessage) returns (StringMessage) {
+    option (google.api.http) = {
+      post : "/v1/example/echo"
+      body : "*"
+    };
+  }
+}
