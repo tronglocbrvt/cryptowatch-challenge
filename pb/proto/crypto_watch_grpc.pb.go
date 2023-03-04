@@ -22,7 +22,15 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CryptoWatchClient interface {
-	Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error)
+	// service: Authentication
+	AuthenticationGoogle(ctx context.Context, in *AuthenticationGoogleRequest, opts ...grpc.CallOption) (*AuthenticationGoogleResponse, error)
+	RegenerateAccessToken(ctx context.Context, in *RegenerateAccessTokenRequest, opts ...grpc.CallOption) (*RegenerateAccessTokenResponse, error)
+	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
+	// service: Price
+	GetLatestPrice(ctx context.Context, in *GetLatestPriceRequest, opts ...grpc.CallOption) (*GetLatestPriceResponse, error)
+	GetPrices(ctx context.Context, in *GetPricesRequest, opts ...grpc.CallOption) (*GetPricesResponse, error)
+	// service: Postion
+	OpenSyntheticPosition(ctx context.Context, in *OpenSyntheticPositionRequest, opts ...grpc.CallOption) (*OpenSyntheticPositionResponse, error)
 }
 
 type cryptoWatchClient struct {
@@ -33,9 +41,54 @@ func NewCryptoWatchClient(cc grpc.ClientConnInterface) CryptoWatchClient {
 	return &cryptoWatchClient{cc}
 }
 
-func (c *cryptoWatchClient) Echo(ctx context.Context, in *StringMessage, opts ...grpc.CallOption) (*StringMessage, error) {
-	out := new(StringMessage)
-	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/Echo", in, out, opts...)
+func (c *cryptoWatchClient) AuthenticationGoogle(ctx context.Context, in *AuthenticationGoogleRequest, opts ...grpc.CallOption) (*AuthenticationGoogleResponse, error) {
+	out := new(AuthenticationGoogleResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/AuthenticationGoogle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoWatchClient) RegenerateAccessToken(ctx context.Context, in *RegenerateAccessTokenRequest, opts ...grpc.CallOption) (*RegenerateAccessTokenResponse, error) {
+	out := new(RegenerateAccessTokenResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/RegenerateAccessToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoWatchClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
+	out := new(LogoutResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/Logout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoWatchClient) GetLatestPrice(ctx context.Context, in *GetLatestPriceRequest, opts ...grpc.CallOption) (*GetLatestPriceResponse, error) {
+	out := new(GetLatestPriceResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/GetLatestPrice", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoWatchClient) GetPrices(ctx context.Context, in *GetPricesRequest, opts ...grpc.CallOption) (*GetPricesResponse, error) {
+	out := new(GetPricesResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/GetPrices", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *cryptoWatchClient) OpenSyntheticPosition(ctx context.Context, in *OpenSyntheticPositionRequest, opts ...grpc.CallOption) (*OpenSyntheticPositionResponse, error) {
+	out := new(OpenSyntheticPositionResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/OpenSyntheticPosition", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +99,15 @@ func (c *cryptoWatchClient) Echo(ctx context.Context, in *StringMessage, opts ..
 // All implementations must embed UnimplementedCryptoWatchServer
 // for forward compatibility
 type CryptoWatchServer interface {
-	Echo(context.Context, *StringMessage) (*StringMessage, error)
+	// service: Authentication
+	AuthenticationGoogle(context.Context, *AuthenticationGoogleRequest) (*AuthenticationGoogleResponse, error)
+	RegenerateAccessToken(context.Context, *RegenerateAccessTokenRequest) (*RegenerateAccessTokenResponse, error)
+	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
+	// service: Price
+	GetLatestPrice(context.Context, *GetLatestPriceRequest) (*GetLatestPriceResponse, error)
+	GetPrices(context.Context, *GetPricesRequest) (*GetPricesResponse, error)
+	// service: Postion
+	OpenSyntheticPosition(context.Context, *OpenSyntheticPositionRequest) (*OpenSyntheticPositionResponse, error)
 	mustEmbedUnimplementedCryptoWatchServer()
 }
 
@@ -54,8 +115,23 @@ type CryptoWatchServer interface {
 type UnimplementedCryptoWatchServer struct {
 }
 
-func (UnimplementedCryptoWatchServer) Echo(context.Context, *StringMessage) (*StringMessage, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
+func (UnimplementedCryptoWatchServer) AuthenticationGoogle(context.Context, *AuthenticationGoogleRequest) (*AuthenticationGoogleResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AuthenticationGoogle not implemented")
+}
+func (UnimplementedCryptoWatchServer) RegenerateAccessToken(context.Context, *RegenerateAccessTokenRequest) (*RegenerateAccessTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegenerateAccessToken not implemented")
+}
+func (UnimplementedCryptoWatchServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedCryptoWatchServer) GetLatestPrice(context.Context, *GetLatestPriceRequest) (*GetLatestPriceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetLatestPrice not implemented")
+}
+func (UnimplementedCryptoWatchServer) GetPrices(context.Context, *GetPricesRequest) (*GetPricesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPrices not implemented")
+}
+func (UnimplementedCryptoWatchServer) OpenSyntheticPosition(context.Context, *OpenSyntheticPositionRequest) (*OpenSyntheticPositionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OpenSyntheticPosition not implemented")
 }
 func (UnimplementedCryptoWatchServer) mustEmbedUnimplementedCryptoWatchServer() {}
 
@@ -70,20 +146,110 @@ func RegisterCryptoWatchServer(s grpc.ServiceRegistrar, srv CryptoWatchServer) {
 	s.RegisterService(&CryptoWatch_ServiceDesc, srv)
 }
 
-func _CryptoWatch_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(StringMessage)
+func _CryptoWatch_AuthenticationGoogle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthenticationGoogleRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CryptoWatchServer).Echo(ctx, in)
+		return srv.(CryptoWatchServer).AuthenticationGoogle(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.CryptoWatch/Echo",
+		FullMethod: "/pb.CryptoWatch/AuthenticationGoogle",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CryptoWatchServer).Echo(ctx, req.(*StringMessage))
+		return srv.(CryptoWatchServer).AuthenticationGoogle(ctx, req.(*AuthenticationGoogleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoWatch_RegenerateAccessToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegenerateAccessTokenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoWatchServer).RegenerateAccessToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CryptoWatch/RegenerateAccessToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoWatchServer).RegenerateAccessToken(ctx, req.(*RegenerateAccessTokenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoWatch_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoWatchServer).Logout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CryptoWatch/Logout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoWatchServer).Logout(ctx, req.(*LogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoWatch_GetLatestPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLatestPriceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoWatchServer).GetLatestPrice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CryptoWatch/GetLatestPrice",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoWatchServer).GetLatestPrice(ctx, req.(*GetLatestPriceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoWatch_GetPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPricesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoWatchServer).GetPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CryptoWatch/GetPrices",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoWatchServer).GetPrices(ctx, req.(*GetPricesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CryptoWatch_OpenSyntheticPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OpenSyntheticPositionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoWatchServer).OpenSyntheticPosition(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CryptoWatch/OpenSyntheticPosition",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoWatchServer).OpenSyntheticPosition(ctx, req.(*OpenSyntheticPositionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -96,8 +262,28 @@ var CryptoWatch_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CryptoWatchServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Echo",
-			Handler:    _CryptoWatch_Echo_Handler,
+			MethodName: "AuthenticationGoogle",
+			Handler:    _CryptoWatch_AuthenticationGoogle_Handler,
+		},
+		{
+			MethodName: "RegenerateAccessToken",
+			Handler:    _CryptoWatch_RegenerateAccessToken_Handler,
+		},
+		{
+			MethodName: "Logout",
+			Handler:    _CryptoWatch_Logout_Handler,
+		},
+		{
+			MethodName: "GetLatestPrice",
+			Handler:    _CryptoWatch_GetLatestPrice_Handler,
+		},
+		{
+			MethodName: "GetPrices",
+			Handler:    _CryptoWatch_GetPrices_Handler,
+		},
+		{
+			MethodName: "OpenSyntheticPosition",
+			Handler:    _CryptoWatch_OpenSyntheticPosition_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

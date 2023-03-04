@@ -12,12 +12,16 @@ import (
 	"log"
 
 	"github.com/cryptowatch_challenge/config"
+	"github.com/cryptowatch_challenge/external"
+	"github.com/cryptowatch_challenge/internal/stores"
 	pb "github.com/cryptowatch_challenge/pb/proto"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func main() {
@@ -27,14 +31,11 @@ func main() {
 	// grpc server
 	s := grpc.NewServer(
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
-			grpc_prometheus.UnaryServerInterceptor,
 			otelgrpc.UnaryServerInterceptor(),
 		)),
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
 
-	grpc_prometheus.EnableHandlingTimeHistogram()
-	grpc_prometheus.Register(s)
 	// Register Prometheus metrics handler.
 	l, err := zap.NewDevelopment()
 	if err != nil {
@@ -52,8 +53,7 @@ func main() {
 		ctxCancel()
 		// Wait for maximum 15s
 		go func() {
-			var durationSec time.Duration = 1
-			timer := time.NewTimer(durationSec * time.Second)
+			timer := time.NewTimer(time.Second)
 			<-timer.C
 			l.Fatal("Force shutdown due to timeout!")
 		}()
@@ -76,8 +76,48 @@ func main() {
 		return
 	}
 
+	db := mustConnectPostgreSQL(cfg)
+	priceStore := stores.NewPriceStore(db)
+	cryptoWatchClient := external.NewCryptoWatchClient(cfg)
+
+	go cryptoWatchClient.ListenCryptoWatch(priceStore)
+
 	err = s.Serve(listener)
 	if err != nil {
 		l.Fatal("error when serve listener", zap.Error(err))
 	}
+}
+
+func mustConnectPostgreSQL(cfg *config.Config) *gorm.DB {
+	logLevel := logger.Silent
+
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold: time.Second, // Slow SQL threshold
+			LogLevel:      logLevel,    // Log level
+			Colorful:      true,        // Disable color
+		},
+	)
+
+	dsn := "host=localhost user=loc.truong dbname=crypto_watch port=5432 sslmode=disable TimeZone=Asia/Ho_Chi_Minh"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger})
+	if err != nil {
+		panic(err)
+	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		panic(err)
+	}
+
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+
+	err = db.Raw("SELECT 1").Error
+	if err != nil {
+		log.Fatal("error querying SELECT 1", zap.Error(err))
+	}
+
+	return db
 }
