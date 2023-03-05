@@ -13,13 +13,10 @@ import (
 	pb "github.com/cryptowatch_challenge/pb/proto"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"google.golang.org/api/oauth2/v1"
 	"google.golang.org/api/option"
 )
-
-const expiration = 240
 
 func (s *service) authenticationGoogle(ctx context.Context, req *pb.AuthenticationGoogleRequest) (*pb.AuthenticationGoogleResponse, error) {
 	tokenInfo, err := s.getEmailIDToken(ctx, req.IdToken)
@@ -28,38 +25,36 @@ func (s *service) authenticationGoogle(ctx context.Context, req *pb.Authenticati
 		return nil, err
 	}
 
-	var userID uint32
+	var user *models.User
 	user, exist, err := s.userStore.GetByEmail(tokenInfo.Email)
 	if err != nil {
 		s.log.Error("error when getting user by email", zap.Error(err))
 		return nil, err
 	}
 	if !exist {
-		newUser := &models.User{
+		user = &models.User{
 			GoogleID: tokenInfo.UserId,
 			Email:    tokenInfo.Email,
 		}
-		err := s.userStore.Save(newUser).Error
+		err := s.userStore.Save(user).Error
 		if err != nil {
 			s.log.Error("error when creating new user", zap.Error(err))
 			return nil, err
 		}
-		userID = newUser.UserID
 	}
-	userID = user.UserID
 
-	accessToken, expireAccess, err := generateToken([]byte("SECRET_KEY_ACCESS_JWT"), fmt.Sprintf("%d", userID))
+	accessToken, expireAccess, err := s.generateToken([]byte(s.cfg.SecretKeyAccessJwt), fmt.Sprintf("%d", user.UserID))
 	if err != nil {
 		s.log.Error("error when generating token", zap.Error(err))
 		return nil, errors.New(err.Error())
 	}
-	refreshToken, expireRefresh, err := generateRefreshToken([]byte("SECRET_KEY_REFRESH_JWT"), fmt.Sprintf("%d", userID))
+	refreshToken, expireRefresh, err := s.generateRefreshToken([]byte(s.cfg.SecretKeyRefreshJwt), fmt.Sprintf("%d", user.UserID))
 	if err != nil {
 		s.log.Error("error when generating refresh token", zap.Error(err))
 		return nil, errors.New(err.Error())
 	}
 
-	err = s.userStore.Update("refresh_token", refreshToken).Error
+	err = s.userStore.Model(&user).Update("refresh_token", refreshToken).Error
 	if err != nil {
 		s.log.Error("error when updating refresh token", zap.Error(err))
 		return nil, errors.New(err.Error())
@@ -93,7 +88,7 @@ func (s *service) regenerateAccessToken(ctx context.Context, req *pb.RegenerateA
 	}
 
 	kf := func(token *jwt.Token) (interface{}, error) {
-		return []byte(viper.GetString("SECRET_KEY_REFRESH_JWT")), nil
+		return []byte(s.cfg.SecretKeyRefreshJwt), nil
 	}
 
 	claims, err := s.ExtractClaims(user.RefreshToken, kf)
@@ -102,7 +97,7 @@ func (s *service) regenerateAccessToken(ctx context.Context, req *pb.RegenerateA
 		return nil, err
 	}
 
-	accessToken, expireAccess, err := generateToken([]byte("SECRET_KEY_ACCESS_JWT"), claims["sub"].(string))
+	accessToken, expireAccess, err := s.generateToken([]byte(s.cfg.SecretKeyAccessJwt), claims["sub"].(string))
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New(err.Error())
@@ -118,7 +113,7 @@ func (s *service) regenerateAccessToken(ctx context.Context, req *pb.RegenerateA
 
 func (s *service) logout(ctx context.Context, req *pb.LogoutRequest) (*pb.LogoutResponse, error) {
 	kf := func(token *jwt.Token) (interface{}, error) {
-		return []byte("SECRET_KEY_ACCESS_JWT"), nil
+		return []byte(s.cfg.SecretKeyAccessJwt), nil
 	}
 
 	claims, err := s.ExtractClaims(req.AccessToken, kf)
@@ -131,7 +126,7 @@ func (s *service) logout(ctx context.Context, req *pb.LogoutRequest) (*pb.Logout
 		return nil, err
 	}
 
-	err = s.userStore.Update("refresh_token", "").Error
+	err = s.userStore.Where("user_id", req.UserId).Update("refresh_token", "").Error
 	if err != nil {
 		s.log.Error("error when removing refresh_token", zap.Error(err))
 		return nil, err
@@ -157,10 +152,10 @@ func (s *service) getEmailIDToken(ctx context.Context, idToken string) (*oauth2.
 	return tokenInfo, nil
 }
 
-func generateToken(signingKey []byte, u string) (string, int64, error) {
+func (s *service) generateToken(signingKey []byte, u string) (string, int64, error) {
 	claims :=
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Second * 60).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * time.Duration(s.cfg.JwtAccessTokenExpirationMinutes)).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
 			Subject:   u,
 			Id:        uuid.New().String(),
@@ -170,10 +165,10 @@ func generateToken(signingKey []byte, u string) (string, int64, error) {
 	return tokenString, claims.ExpiresAt, err
 }
 
-func generateRefreshToken(signingKey []byte, uuid string) (string, int64, error) {
+func (s *service) generateRefreshToken(signingKey []byte, uuid string) (string, int64, error) {
 	claims :=
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * expiration).Unix(),
+			ExpiresAt: time.Now().Add(time.Hour * time.Duration(s.cfg.JwtRefreshTokenExpirationHours)).Unix(),
 			IssuedAt:  jwt.TimeFunc().Unix(),
 			Subject:   uuid,
 		}

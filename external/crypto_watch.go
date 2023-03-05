@@ -45,18 +45,18 @@ type Trade struct {
 }
 
 type CryptoWatchClient struct {
-	*config.Config
+	config *config.Config
 }
 
 func NewCryptoWatchClient(config *config.Config) *CryptoWatchClient {
 	return &CryptoWatchClient{
-		Config: config,
+		config: config,
 	}
 }
 
 func (s *CryptoWatchClient) ListenCryptoWatch(priceStore *stores.PriceStore) {
-	APIKEY := "Z1SO5DO6KG6XF6ECNAN4"
-	c, _, err := websocket.DefaultDialer.Dial("wss://stream.cryptowat.ch/connect?apikey="+APIKEY, nil)
+	APIKEY := s.config.CryptoWatchApiKey
+	c, _, err := websocket.DefaultDialer.Dial(s.config.CryptoWatchUrl+APIKEY, nil)
 	if err != nil {
 		panic(err)
 	}

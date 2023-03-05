@@ -8,9 +8,11 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2
 	github.com/prometheus/client_golang v1.14.0
+	github.com/rs/cors v1.8.3
 	github.com/spf13/viper v1.15.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.40.0
 	go.uber.org/zap v1.24.0
+	golang.org/x/oauth2 v0.5.0
 	google.golang.org/api v0.108.0
 	google.golang.org/genproto v0.0.0-20230223222841-637eb2293923
 	google.golang.org/grpc v1.53.0
@@ -32,7 +34,6 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
-	golang.org/x/oauth2 v0.5.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 )
 

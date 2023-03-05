@@ -12,8 +12,6 @@ import (
 	"log"
 
 	"github.com/cryptowatch_challenge/config"
-	"github.com/cryptowatch_challenge/external"
-	"github.com/cryptowatch_challenge/internal/stores"
 	pb "github.com/cryptowatch_challenge/pb/proto"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -76,11 +74,11 @@ func main() {
 		return
 	}
 
-	db := mustConnectPostgreSQL(cfg)
-	priceStore := stores.NewPriceStore(db)
-	cryptoWatchClient := external.NewCryptoWatchClient(cfg)
+	// db := mustConnectPostgreSQL(cfg)
+	// priceStore := stores.NewPriceStore(db)
+	// cryptoWatchClient := external.NewCryptoWatchClient(cfg)
 
-	go cryptoWatchClient.ListenCryptoWatch(priceStore)
+	// go cryptoWatchClient.ListenCryptoWatch(priceStore)
 
 	err = s.Serve(listener)
 	if err != nil {
@@ -100,7 +98,7 @@ func mustConnectPostgreSQL(cfg *config.Config) *gorm.DB {
 		},
 	)
 
-	dsn := "host=localhost user=loc.truong dbname=crypto_watch port=5432 sslmode=disable TimeZone=Asia/Ho_Chi_Minh"
+	dsn := fmt.Sprintf("host=%s user=%s dbname=%s port=%d sslmode=disable TimeZone=%s", cfg.PostgreSQL.Address, cfg.PostgreSQL.Username, cfg.PostgreSQL.Database, cfg.PostgreSQL.Port, cfg.PostgreSQL.Timezone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger})
 	if err != nil {
 		panic(err)

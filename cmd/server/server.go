@@ -8,9 +8,11 @@ import (
 	"strings"
 
 	"github.com/cryptowatch_challenge/config"
+	"github.com/cryptowatch_challenge/external"
 	pb "github.com/cryptowatch_challenge/pb/proto"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -47,6 +49,14 @@ func (s *Server) RunGRPCGateway() (err error) {
 	}
 
 	muxHttp := http.NewServeMux()
+	withCors := cors.New(cors.Options{
+		AllowOriginFunc:  func(origin string) bool { return true },
+		AllowedMethods:   []string{"GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"ACCEPT", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}).Handler(muxHttp)
+
 	muxHttp.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
 		promhttp.Handler().ServeHTTP(w, r)
 	})
@@ -57,9 +67,14 @@ func (s *Server) RunGRPCGateway() (err error) {
 	muxHttp.HandleFunc("/debug/pprof/symbol", pprof.Symbol)
 	muxHttp.HandleFunc("/debug/pprof/trace", pprof.Trace)
 
+	// OauthGoogle
+	loginGoogleClient := external.NewLoginGoogleClient(config.Load())
+	muxHttp.HandleFunc("/auth/login", loginGoogleClient.OauthGoogleLogin)
+	muxHttp.HandleFunc("/auth/callback", loginGoogleClient.OauthGoogleCallback)
+
 	muxHttp.Handle("/", forwardAccessToken(mux))
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", s.cfg.HTTPAddress), muxHttp)
+	return http.ListenAndServe(fmt.Sprintf(":%d", s.cfg.HTTPAddress), withCors)
 }
 
 func forwardAccessToken(next http.Handler) http.HandlerFunc {
