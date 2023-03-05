@@ -16,7 +16,7 @@ google_oauth_api_url: https://www.googleapis.com/oauth2/v2/userinfo?access_token
 crypto_watch_api_key: Z1SO5DO6KG6XF6ECNAN4
 crypto_watch_url: wss://stream.cryptowat.ch/connect?apikey=
 time_interval_call_crypto_watch_second: 600
-limit_get_prices_chart: 1500
+limit_get_prices_chart: 1000
 postgre:
   address: ec2-3-230-122-20.compute-1.amazonaws.com
   port: 5432

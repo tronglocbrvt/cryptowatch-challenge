@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/cryptowatch_challenge/internal/models"
+	"github.com/cryptowatch_challenge/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -66,6 +67,8 @@ func (m *PriceStore) getPricesForChart(numsHour uint32, limit int) ([]*models.Pr
 	if err != nil {
 		return pricesAsc, nil
 	}
+
+	pricesDesc = utils.Reverse(pricesDesc)
 
 	return append(pricesAsc, pricesDesc...), err
 }
