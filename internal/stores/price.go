@@ -2,9 +2,9 @@ package stores
 
 import (
 	"fmt"
+	"sort"
 
 	"github.com/cryptowatch_challenge/internal/models"
-	"github.com/cryptowatch_challenge/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -68,7 +68,11 @@ func (m *PriceStore) getPricesForChart(numsHour uint32, limit int) ([]*models.Pr
 		return pricesAsc, nil
 	}
 
-	pricesDesc = utils.Reverse(pricesDesc)
+	prices := append(pricesAsc, pricesDesc...)
 
-	return append(pricesAsc, pricesDesc...), err
+	sort.Slice(prices[:], func(i, j int) bool {
+		return prices[i].PriceID < prices[j].PriceID
+	})
+
+	return prices, err
 }
