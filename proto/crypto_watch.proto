@@ -106,7 +106,6 @@ message OpenSyntheticPositionRequest {
 message OpenSyntheticPositionResponse {
   uint32 flag = 1;
 	string message = 2;
-  double unrealized_pnl = 3;
 }
 
 service CryptoWatch {
