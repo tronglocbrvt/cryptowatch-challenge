@@ -15,6 +15,8 @@ google_oauth_scope: https://www.googleapis.com/auth/userinfo.email
 google_oauth_api_url: https://www.googleapis.com/oauth2/v2/userinfo?access_token=
 crypto_watch_api_key: Z1SO5DO6KG6XF6ECNAN4
 crypto_watch_url: wss://stream.cryptowat.ch/connect?apikey=
+time_interval_call_crypto_watch_second: 5
+limit_get_prices_chart: 1500
 postgre:
   address: ec2-3-230-122-20.compute-1.amazonaws.com
   port: 5432
@@ -24,20 +26,22 @@ postgre:
 `)
 
 type Config struct {
-	HTTPAddress                     int         `yaml:"http_address" mapstructure:"http_address"`
-	GRPCAddress                     int         `yaml:"grpc_address" mapstructure:"grpc_address"`
-	SecretKeyAccessJwt              string      `yaml:"secret_key_access_jwt" mapstructure:"secret_key_access_jwt"`
-	SecretKeyRefreshJwt             string      `yaml:"secret_key_refresh_jwt" mapstructure:"secret_key_refresh_jwt"`
-	JwtAccessTokenExpirationMinutes int         `yaml:"jwt_access_token_expiration_minutes" mapstructure:"jwt_access_token_expiration_minutes"`
-	JwtRefreshTokenExpirationHours  int         `yaml:"jwt_refresh_token_expiration_hours" mapstructure:"jwt_refresh_token_expiration_hours"`
-	GoogleOauthRedirectUrl          string      `yaml:"google_oauth_redirect_url" mapstructure:"google_oauth_redirect_url"`
-	GoogleOauthClientID             string      `yaml:"google_oauth_client_id" mapstructure:"google_oauth_client_id"`
-	GoogleOauthClientSecret         string      `yaml:"google_oauth_client_secret" mapstructure:"google_oauth_client_secret"`
-	GoogleOauthScope                string      `yaml:"google_oauth_scope" mapstructure:"google_oauth_scope"`
-	GoogleOauthApiUrl               string      `yaml:"google_oauth_api_url" mapstructure:"google_oauth_api_url"`
-	CryptoWatchApiKey               string      `yaml:"crypto_watch_api_key" mapstructure:"crypto_watch_api_key"`
-	CryptoWatchUrl                  string      `yaml:"crypto_watch_url" mapstructure:"crypto_watch_url"`
-	PostgreSQL                      *PostgreSQL `yaml:"postgre" mapstructure:"postgre"`
+	HTTPAddress                       int         `yaml:"http_address" mapstructure:"http_address"`
+	GRPCAddress                       int         `yaml:"grpc_address" mapstructure:"grpc_address"`
+	SecretKeyAccessJwt                string      `yaml:"secret_key_access_jwt" mapstructure:"secret_key_access_jwt"`
+	SecretKeyRefreshJwt               string      `yaml:"secret_key_refresh_jwt" mapstructure:"secret_key_refresh_jwt"`
+	JwtAccessTokenExpirationMinutes   int         `yaml:"jwt_access_token_expiration_minutes" mapstructure:"jwt_access_token_expiration_minutes"`
+	JwtRefreshTokenExpirationHours    int         `yaml:"jwt_refresh_token_expiration_hours" mapstructure:"jwt_refresh_token_expiration_hours"`
+	GoogleOauthRedirectUrl            string      `yaml:"google_oauth_redirect_url" mapstructure:"google_oauth_redirect_url"`
+	GoogleOauthClientID               string      `yaml:"google_oauth_client_id" mapstructure:"google_oauth_client_id"`
+	GoogleOauthClientSecret           string      `yaml:"google_oauth_client_secret" mapstructure:"google_oauth_client_secret"`
+	GoogleOauthScope                  string      `yaml:"google_oauth_scope" mapstructure:"google_oauth_scope"`
+	GoogleOauthApiUrl                 string      `yaml:"google_oauth_api_url" mapstructure:"google_oauth_api_url"`
+	CryptoWatchApiKey                 string      `yaml:"crypto_watch_api_key" mapstructure:"crypto_watch_api_key"`
+	CryptoWatchUrl                    string      `yaml:"crypto_watch_url" mapstructure:"crypto_watch_url"`
+	TimeIntervalCallCryptoWatchSecond int         `yaml:"time_interval_call_crypto_watch_second" mapstructure:"time_interval_call_crypto_watch_second"`
+	LimitGetPricesChart               int         `yaml:"limit_get_prices_chart" mapstructure:"limit_get_prices_chart"`
+	PostgreSQL                        *PostgreSQL `yaml:"postgre" mapstructure:"postgre"`
 }
 
 type PostgreSQL struct {

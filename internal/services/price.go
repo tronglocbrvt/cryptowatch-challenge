@@ -28,7 +28,7 @@ func (s *service) getLatestPrice(ctx context.Context, req *pb.GetLatestPriceRequ
 }
 
 func (s *service) getPrices(ctx context.Context, req *pb.GetPricesRequest) (*pb.GetPricesResponse, error) {
-	if req.Limit <= 0 {
+	if req.Limit <= 0 || req.Limit > uint32(s.cfg.LimitGetPricesChart) {
 		req.Limit = 100
 	}
 
@@ -58,7 +58,7 @@ func (s *service) getPrices(ctx context.Context, req *pb.GetPricesRequest) (*pb.
 }
 
 func (s *service) getPricesForChart(ctx context.Context, req *pb.GetPricesForChartRequest) (*pb.GetPricesForChartResponse, error) {
-	prices, err := s.priceStore.GetPricesForChart(req.NumsHour)
+	prices, err := s.priceStore.GetPricesForChart(req.NumsHour, s.cfg.LimitGetPricesChart)
 	if err != nil {
 		s.log.Error("error when getting prices for chart", zap.Error(err))
 		return nil, err

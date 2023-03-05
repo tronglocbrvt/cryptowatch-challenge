@@ -34,6 +34,6 @@ func (m *PriceStore) GetPrices(marketID, limit, offset uint32) ([]*models.Price,
 	return m.getPrices(marketID, limit, offset)
 }
 
-func (m *PriceStore) GetPricesForChart(numsHour uint32) ([]*models.Price, error) {
-	return m.getPricesForChart(numsHour)
+func (m *PriceStore) GetPricesForChart(numsHour uint32, limit int) ([]*models.Price, error) {
+	return m.getPricesForChart(numsHour, limit)
 }
