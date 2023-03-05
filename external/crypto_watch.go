@@ -135,6 +135,10 @@ func (s *CryptoWatchClient) ListenCryptoWatch(priceStore *stores.PriceStore) {
 			continue
 		}
 
+		if len(prices) == 0 {
+			continue
+		}
+
 		time.Sleep(time.Duration(s.config.TimeIntervalCallCryptoWatchSecond) * time.Second)
 	}
 }
