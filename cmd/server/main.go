@@ -98,7 +98,7 @@ func mustConnectPostgreSQL(cfg *config.Config) *gorm.DB {
 		},
 	)
 
-	dsn := fmt.Sprintf("host=%s user=%s dbname=%s port=%d sslmode=disable TimeZone=%s", cfg.PostgreSQL.Address, cfg.PostgreSQL.Username, cfg.PostgreSQL.Database, cfg.PostgreSQL.Port, cfg.PostgreSQL.Timezone)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=%s", cfg.PostgreSQL.Address, cfg.PostgreSQL.Username, cfg.PostgreSQL.Password, cfg.PostgreSQL.Database, cfg.PostgreSQL.Port, cfg.PostgreSQL.Timezone)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{Logger: newLogger})
 	if err != nil {
 		panic(err)
