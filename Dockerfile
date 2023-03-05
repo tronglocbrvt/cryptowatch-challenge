@@ -9,10 +9,6 @@ RUN go build  /app/cmd/server
 
 FROM alpine:3.14
 
-RUN apk add --update ca-certificates tzdata && \
-    cp /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime && \
-    echo "Asia/Ho_Chi_Minh" > /etc/timezone && \
-    rm -rf /var/cache/apk/*
 
 ENV OTEL_SERVICE_NAME=crypto-watch
 COPY --from=builder /app/server /app/server

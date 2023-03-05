@@ -21,7 +21,6 @@ postgre:
   database: d9dj74icn7ml60
   username: hklvuymhxhwihu
   password: dfe9f4d933f1930a209af24dc4b46545670176e63e45d1f91ac56d9658adfdc8
-  timezone: Asia/Ho_Chi_Minh
 `)
 
 type Config struct {
@@ -47,5 +46,4 @@ type PostgreSQL struct {
 	Port     int    `yaml:"port" mapstructure:"port"`
 	Address  string `yaml:"address" mapstructure:"address"`
 	Database string `yaml:"database" mapstructure:"database"`
-	Timezone string `yaml:"timezone" mapstructure:"timezone"`
 }
