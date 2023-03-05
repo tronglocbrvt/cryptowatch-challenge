@@ -15,3 +15,8 @@ func (s *service) GetPrices(ctx context.Context, req *pb.GetPricesRequest) (*pb.
 	resp, err := s.getPrices(ctx, req)
 	return resp, err
 }
+
+func (s *service) GetPricesForChart(ctx context.Context, req *pb.GetPricesForChartRequest) (*pb.GetPricesForChartResponse, error) {
+	resp, err := s.getPricesForChart(ctx, req)
+	return resp, err
+}

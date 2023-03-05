@@ -56,3 +56,23 @@ func (s *service) getPrices(ctx context.Context, req *pb.GetPricesRequest) (*pb.
 		Prices:  pbPrices,
 	}, nil
 }
+
+func (s *service) getPricesForChart(ctx context.Context, req *pb.GetPricesForChartRequest) (*pb.GetPricesForChartResponse, error) {
+	prices, err := s.priceStore.GetPricesForChart(req.NumsHour)
+	if err != nil {
+		s.log.Error("error when getting prices for chart", zap.Error(err))
+		return nil, err
+	}
+
+	pbPrices := make([]*pb.PriceChart, 0)
+
+	for i := 0; i < len(prices); i++ {
+		pbPrices = append(pbPrices, &pb.PriceChart{PriceChart: []float64{float64(prices[i].CreatedAt.Unix()), prices[i].Price}})
+	}
+
+	return &pb.GetPricesForChartResponse{
+		Flag:    constants.FlagSuccess,
+		Message: "Success",
+		Prices:  pbPrices,
+	}, nil
+}

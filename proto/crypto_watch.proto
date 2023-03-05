@@ -70,6 +70,21 @@ message GetPricesResponse {
   repeated Price prices = 3;
 }
 
+message PriceChart {
+  repeated double price_chart = 1;
+}
+
+message GetPricesForChartRequest {
+  uint32 nums_hour = 1;
+}
+
+message GetPricesForChartResponse {
+  uint32 flag = 1;
+	string message = 2;
+  repeated PriceChart prices = 3;
+
+}
+
 message Position {
   uint32 position_id = 1;
   uint32 user_id = 2;
@@ -128,6 +143,13 @@ service CryptoWatch {
   rpc GetPrices(GetPricesRequest) returns (GetPricesResponse) {
     option (google.api.http) = {
       post : "/v1/crypto-watch/get-prices"
+      body : "*"
+    };
+  }
+
+  rpc GetPricesForChart(GetPricesForChartRequest) returns (GetPricesForChartResponse) {
+    option (google.api.http) = {
+      post : "/v1/crypto-watch/get-prices-chart"
       body : "*"
     };
   }

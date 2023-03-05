@@ -33,3 +33,7 @@ func (m *PriceStore) GetLastestPrice(marketID uint32) (*models.Price, bool, erro
 func (m *PriceStore) GetPrices(marketID, limit, offset uint32) ([]*models.Price, error) {
 	return m.getPrices(marketID, limit, offset)
 }
+
+func (m *PriceStore) GetPricesForChart(numsHour uint32) ([]*models.Price, error) {
+	return m.getPricesForChart(numsHour)
+}

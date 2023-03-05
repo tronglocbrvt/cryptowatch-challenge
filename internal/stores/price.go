@@ -1,6 +1,8 @@
 package stores
 
 import (
+	"fmt"
+
 	"github.com/cryptowatch_challenge/internal/models"
 	"gorm.io/gorm"
 )
@@ -45,7 +47,15 @@ func (m *PriceStore) getPrices(marketID, limit, offset uint32) ([]*models.Price,
 		query = query.Where("market_id = ?", marketID)
 	}
 
-	err := query.Limit(int(limit)).Offset(int(offset)).Error
+	err := query.Limit(int(limit)).Offset(int(offset)).Find(&prices).Error
+
+	return prices, err
+}
+
+func (m *PriceStore) getPricesForChart(numsHour uint32) ([]*models.Price, error) {
+	prices := make([]*models.Price, 0)
+
+	err := m.Model(models.Price{}).Where(fmt.Sprintf("created_at < (NOW() - INTERVAL '%d' HOUR)", numsHour)).Find(&prices).Error
 
 	return prices, err
 }

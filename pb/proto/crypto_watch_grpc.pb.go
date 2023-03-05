@@ -29,6 +29,7 @@ type CryptoWatchClient interface {
 	// service: Price
 	GetLatestPrice(ctx context.Context, in *GetLatestPriceRequest, opts ...grpc.CallOption) (*GetLatestPriceResponse, error)
 	GetPrices(ctx context.Context, in *GetPricesRequest, opts ...grpc.CallOption) (*GetPricesResponse, error)
+	GetPricesForChart(ctx context.Context, in *GetPricesForChartRequest, opts ...grpc.CallOption) (*GetPricesForChartResponse, error)
 	// service: Postion
 	OpenSyntheticPosition(ctx context.Context, in *OpenSyntheticPositionRequest, opts ...grpc.CallOption) (*OpenSyntheticPositionResponse, error)
 }
@@ -86,6 +87,15 @@ func (c *cryptoWatchClient) GetPrices(ctx context.Context, in *GetPricesRequest,
 	return out, nil
 }
 
+func (c *cryptoWatchClient) GetPricesForChart(ctx context.Context, in *GetPricesForChartRequest, opts ...grpc.CallOption) (*GetPricesForChartResponse, error) {
+	out := new(GetPricesForChartResponse)
+	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/GetPricesForChart", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *cryptoWatchClient) OpenSyntheticPosition(ctx context.Context, in *OpenSyntheticPositionRequest, opts ...grpc.CallOption) (*OpenSyntheticPositionResponse, error) {
 	out := new(OpenSyntheticPositionResponse)
 	err := c.cc.Invoke(ctx, "/pb.CryptoWatch/OpenSyntheticPosition", in, out, opts...)
@@ -106,6 +116,7 @@ type CryptoWatchServer interface {
 	// service: Price
 	GetLatestPrice(context.Context, *GetLatestPriceRequest) (*GetLatestPriceResponse, error)
 	GetPrices(context.Context, *GetPricesRequest) (*GetPricesResponse, error)
+	GetPricesForChart(context.Context, *GetPricesForChartRequest) (*GetPricesForChartResponse, error)
 	// service: Postion
 	OpenSyntheticPosition(context.Context, *OpenSyntheticPositionRequest) (*OpenSyntheticPositionResponse, error)
 	mustEmbedUnimplementedCryptoWatchServer()
@@ -129,6 +140,9 @@ func (UnimplementedCryptoWatchServer) GetLatestPrice(context.Context, *GetLatest
 }
 func (UnimplementedCryptoWatchServer) GetPrices(context.Context, *GetPricesRequest) (*GetPricesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPrices not implemented")
+}
+func (UnimplementedCryptoWatchServer) GetPricesForChart(context.Context, *GetPricesForChartRequest) (*GetPricesForChartResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPricesForChart not implemented")
 }
 func (UnimplementedCryptoWatchServer) OpenSyntheticPosition(context.Context, *OpenSyntheticPositionRequest) (*OpenSyntheticPositionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OpenSyntheticPosition not implemented")
@@ -236,6 +250,24 @@ func _CryptoWatch_GetPrices_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CryptoWatch_GetPricesForChart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPricesForChartRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CryptoWatchServer).GetPricesForChart(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.CryptoWatch/GetPricesForChart",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CryptoWatchServer).GetPricesForChart(ctx, req.(*GetPricesForChartRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CryptoWatch_OpenSyntheticPosition_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(OpenSyntheticPositionRequest)
 	if err := dec(in); err != nil {
@@ -280,6 +312,10 @@ var CryptoWatch_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPrices",
 			Handler:    _CryptoWatch_GetPrices_Handler,
+		},
+		{
+			MethodName: "GetPricesForChart",
+			Handler:    _CryptoWatch_GetPricesForChart_Handler,
 		},
 		{
 			MethodName: "OpenSyntheticPosition",
