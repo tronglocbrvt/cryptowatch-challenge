@@ -16,11 +16,11 @@ google_oauth_api_url: https://www.googleapis.com/oauth2/v2/userinfo?access_token
 crypto_watch_api_key: Z1SO5DO6KG6XF6ECNAN4
 crypto_watch_url: wss://stream.cryptowat.ch/connect?apikey=
 postgre:
-  address: localhost
+  address: ec2-3-230-122-20.compute-1.amazonaws.com
   port: 5432
-  database: crypto_watch
-  username: loc.truong
-  password: ""
+  database: d9dj74icn7ml60
+  username: hklvuymhxhwihu
+  password: dfe9f4d933f1930a209af24dc4b46545670176e63e45d1f91ac56d9658adfdc8
   timezone: Asia/Ho_Chi_Minh
 `)
 
