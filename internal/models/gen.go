@@ -25,7 +25,6 @@ func FromPositionProto(proto *pb.Position) *Position {
 	}
 
 	position := &Position{
-		PositionID: proto.PositionId,
 		UserID:     proto.UserId,
 		Asset:      proto.Asset,
 		Side:       proto.Side,

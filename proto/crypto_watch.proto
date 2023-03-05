@@ -75,7 +75,7 @@ message Position {
   uint32 user_id = 2;
   string asset = 3;
   string side = 4;
-  uint32 size = 5;
+  float size = 5;
   double entry_price = 6;
   uint32 leverage = 7; 
   uint32 status = 8; 

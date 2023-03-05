@@ -29,7 +29,11 @@ func (s *service) openSyntheticPosition(ctx context.Context, req *pb.OpenSynthet
 	}
 	if !exist {
 		s.log.Error("latest price does not exist", zap.Error(err))
-		return nil, err
+		return &pb.OpenSyntheticPositionResponse{
+			Flag:          constants.FlagSuccess,
+			Message:       "Success",
+			UnrealizedPnl: 0,
+		}, nil
 	}
 
 	unrealizedPnL := (latestPrice.Price - position.EntryPrice) * float64(position.Size) / float64(position.Leverage)
