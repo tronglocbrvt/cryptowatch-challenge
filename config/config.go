@@ -13,7 +13,7 @@ google_oauth_client_id: MTQzNTU2MTM4MjQ3LWh1cTM1NXRtcmpjaTk1YzhyamZtcmJnbHJ0OTh0
 google_oauth_client_secret: R09DU1BYLUNBN3FIcFg5OXdEalBib2pSNnNtVWVLTm9Rakc=
 google_oauth_scope: https://www.googleapis.com/auth/userinfo.email
 google_oauth_api_url: https://www.googleapis.com/oauth2/v2/userinfo?access_token=
-crypto_watch_api_key: Z1SO5DO6KG6XF6ECNAN4
+crypto_watch_api_key: 3AEI90E8AW05EMM96QIU
 crypto_watch_url: wss://stream.cryptowat.ch/connect?apikey=
 time_interval_call_crypto_watch_second: 600
 limit_get_prices_chart: 1000
