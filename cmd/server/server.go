@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/pprof"
+	"os"
 	"strings"
 
 	"github.com/cryptowatch_challenge/config"
@@ -73,8 +74,13 @@ func (s *Server) RunGRPCGateway() (err error) {
 	muxHttp.HandleFunc("/auth/callback", loginGoogleClient.OauthGoogleCallback)
 
 	muxHttp.Handle("/", forwardAccessToken(mux))
+	port := os.Getenv("PORT")
 
-	return http.ListenAndServe(fmt.Sprintf(":%d", s.cfg.HTTPAddress), withCors)
+	if port == "" {
+		port = fmt.Sprintf("%d", s.cfg.HTTPAddress)
+	}
+
+	return http.ListenAndServe(fmt.Sprintf(":%s", port), withCors)
 }
 
 func forwardAccessToken(next http.Handler) http.HandlerFunc {
