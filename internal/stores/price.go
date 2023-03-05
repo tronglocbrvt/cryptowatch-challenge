@@ -53,9 +53,19 @@ func (m *PriceStore) getPrices(marketID, limit, offset uint32) ([]*models.Price,
 }
 
 func (m *PriceStore) getPricesForChart(numsHour uint32, limit int) ([]*models.Price, error) {
-	prices := make([]*models.Price, 0)
+	pricesAsc := make([]*models.Price, 0)
+	pricesDesc := make([]*models.Price, 0)
 
-	err := m.Model(models.Price{}).Where(fmt.Sprintf("created_at < (NOW() + INTERVAL '1' HOUR) AND created_at > (NOW() - INTERVAL '%d' HOUR)", numsHour)).Limit(limit).Order("price_id DESC").Find(&prices).Error
+	query := m.Model(models.Price{}).Where(fmt.Sprintf("created_at < (NOW() + INTERVAL '1' HOUR) AND created_at > (NOW() - INTERVAL '%d' HOUR)", numsHour))
 
-	return prices, err
+	err := query.Limit(limit / 2).Find(&pricesAsc).Error
+	if err != nil {
+		return pricesAsc, nil
+	}
+	err = query.Limit(limit / 2).Order("price_id DESC").Find(&pricesDesc).Error
+	if err != nil {
+		return pricesAsc, nil
+	}
+
+	return append(pricesAsc, pricesDesc...), err
 }
