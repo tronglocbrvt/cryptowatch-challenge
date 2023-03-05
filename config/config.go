@@ -9,8 +9,8 @@ secret_key_refresh_jwt: ZGVjaWRlY29tcG9zZWRzZXJpZXNzb3V0aGFjdHVhbGJhY2tzZWNvbmRs
 jwt_access_token_expiration_minutes: 5
 jwt_refresh_token_expiration_hours: 240
 google_oauth_redirect_url: http://localhost:9000/auth/callback
-google_oauth_client_id: 143556138247-huq355tmrjci95c8rjfmrbglrt98tcr5.apps.googleusercontent.com
-google_oauth_client_secret: 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
+google_oauth_client_id: MTQzNTU2MTM4MjQ3LWh1cTM1NXRtcmpjaTk1YzhyamZtcmJnbHJ0OTh0Y3I1LmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t
+google_oauth_client_secret: R09DU1BYLUNBN3FIcFg5OXdEalBib2pSNnNtVWVLTm9Rakc=
 google_oauth_scope: https://www.googleapis.com/auth/userinfo.email
 google_oauth_api_url: https://www.googleapis.com/oauth2/v2/userinfo?access_token=
 crypto_watch_api_key: Z1SO5DO6KG6XF6ECNAN4

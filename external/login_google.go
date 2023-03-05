@@ -12,6 +12,8 @@ import (
 
 	"github.com/cryptowatch_challenge/config"
 
+	b64 "encoding/base64"
+
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -30,10 +32,18 @@ var googleOauthConfig *oauth2.Config
 
 // Scopes: OAuth 2.0 scopes provide a way to limit the amount of access that is granted to an access token.
 func (s *LoginGoogleClient) initAuth() {
+	googleOauthClientIDDec, err := b64.StdEncoding.DecodeString(s.config.GoogleOauthClientID)
+	if err != nil {
+		return
+	}
+	googleOauthClientSecretDec, err := b64.StdEncoding.DecodeString(s.config.GoogleOauthClientSecret)
+	if err != nil {
+		return
+	}
 	googleOauthConfig = &oauth2.Config{
 		RedirectURL:  s.config.GoogleOauthRedirectUrl,
-		ClientID:     s.config.GoogleOauthClientID,
-		ClientSecret: s.config.GoogleOauthClientSecret,
+		ClientID:     string(googleOauthClientIDDec),
+		ClientSecret: string(googleOauthClientSecretDec),
 		Scopes:       []string{s.config.GoogleOauthScope},
 		Endpoint:     google.Endpoint,
 	}
