@@ -12,6 +12,8 @@ import (
 	"log"
 
 	"github.com/cryptowatch_challenge/config"
+	"github.com/cryptowatch_challenge/external"
+	"github.com/cryptowatch_challenge/internal/stores"
 	pb "github.com/cryptowatch_challenge/pb/proto"
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -74,11 +76,11 @@ func main() {
 		return
 	}
 
-	// db := mustConnectPostgreSQL(cfg)
-	// priceStore := stores.NewPriceStore(db)
-	// cryptoWatchClient := external.NewCryptoWatchClient(cfg)
+	db := mustConnectPostgreSQL(cfg)
+	priceStore := stores.NewPriceStore(db)
+	cryptoWatchClient := external.NewCryptoWatchClient(cfg)
 
-	// go cryptoWatchClient.ListenCryptoWatch(priceStore)
+	go cryptoWatchClient.ListenCryptoWatch(priceStore)
 
 	err = s.Serve(listener)
 	if err != nil {
